@@ -1,0 +1,1939 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Тестовое Ламода — расширенный слот примерки</title>
+  <style>
+    :root {
+      --bg: #f4f4f4;
+      --surface: #fff;
+      --text: #1a1a1a;
+      --text-secondary: #555;
+      --text-muted: #888;
+      --border: #eee;
+      --border-strong: #ddd;
+
+      /* Акценты — семантические */
+      --green: #22c55e;
+      --green-bg: #f0fdf4;
+      --green-border: #bbf7d0;
+      --green-text: #15803d;
+
+      --amber: #f59e0b;
+      --amber-bg: #fffbeb;
+      --amber-border: #fde68a;
+      --amber-text: #b45309;
+
+      --blue: #0369a1;
+      --blue-bg: #f0f9ff;
+      --blue-border: #bae6fd;
+      --blue-text: #0369a1;
+
+      --gray: #94a3b8;
+      --gray-bg: #f1f5f9;
+      --gray-text: #64748b;
+
+      --red-bg: #fef2f2;
+      --red-border: #fecaca;
+      --red-text: #dc2626;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      font-size: 16px;
+      background: #f4f4f4;
+      color: #1a1a1a;
+      line-height: 1.65;
+    }
+
+    code {
+      font-family: ui-monospace, 'Cascadia Code', 'SF Mono', Menlo, monospace;
+      font-size: 0.88em;
+      padding: 0.15em 0.45em;
+      border-radius: 4px;
+      background: #EEF2F7;
+      color: #1a1a1a;
+    }
+
+    a {
+      color: #0369a1;
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    /* Sticky nav */
+    .site-nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: #fff;
+      border-bottom: 1px solid #eee;
+      box-shadow: none;
+    }
+
+    .site-nav-inner {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 20px;
+      height: 48px;
+    }
+
+    .nav-author {
+      font-size: 13px;
+      font-weight: 700;
+      color: #1a1a1a;
+      margin-right: auto;
+      white-space: nowrap;
+    }
+
+    .site-nav a {
+      color: #555;
+      font-size: 13px;
+      font-weight: 600;
+      text-decoration: none;
+      border-bottom: 2px solid transparent;
+      padding: 4px 0;
+      transition: border-color 0.15s, color 0.15s;
+      white-space: nowrap;
+    }
+
+    .site-nav a:hover {
+      color: #1a1a1a;
+      text-decoration: none;
+    }
+
+    .site-nav a.active {
+      color: #1a1a1a;
+      font-weight: 700;
+      border-bottom: 2px solid #111;
+    }
+
+    /* Hero — светлый */
+    .hero {
+      background: #fff;
+      border-bottom: 1px solid #eee;
+      padding: 48px 0 40px;
+    }
+
+    .hero-inner {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    .hero h1 {
+      font-size: 32px;
+      font-weight: 700;
+      color: #1a1a1a;
+      margin: 0 0 16px;
+      line-height: 1.2;
+    }
+
+    .hero .lead {
+      font-size: 15px;
+      color: #333;
+      margin-top: 10px;
+      margin-bottom: 16px;
+      font-weight: 500;
+    }
+
+    .hero > .hero-inner > p:not(.lead) {
+      margin: 0;
+      font-size: 15px;
+      line-height: 1.65;
+      color: #555;
+    }
+
+    .hero-badges {
+      margin-top: 28px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: flex-start;
+    }
+
+    .hero-badge {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 6px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .hero-badge.discovery { background: #f0f9ff; color: #0369a1; border: 1px solid #bae6fd; }
+    .hero-badge.delivery  { background: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; }
+    .hero-badge.ab        { background: #fffbeb; color: #b45309; border: 1px solid #fde68a; }
+
+    /* Layout */
+    .wrap {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    section {
+      padding: 56px 0 48px;
+      scroll-margin-top: 72px;
+      border-top: 1px solid #eee;
+    }
+
+    section:first-child {
+      border-top: none;
+    }
+
+    .section-badge {
+      background: #111;
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      padding: 4px 10px;
+      border-radius: 6px;
+      text-transform: uppercase;
+      display: inline-block;
+      margin-bottom: 8px;
+    }
+
+    section h2 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin: 0 0 20px;
+      color: #1a1a1a;
+    }
+
+    section h3 {
+      font-size: 1.05rem;
+      font-weight: 700;
+      margin: 44px 0 12px;
+      color: #1a1a1a;
+    }
+
+    .card, .risk-card, .mvp-card, .flow-card {
+      background: #fff;
+      border-radius: 10px;
+      padding: 16px;
+      border: 1px solid #eee;
+      box-shadow: 0 1px 6px rgba(0,0,0,0.07);
+    }
+
+    .card {
+      padding: 20px 22px;
+    }
+
+    .callout {
+      border-left: 3px solid #0369a1;
+      background: #f0f9ff;
+      color: #1a1a1a;
+      padding: 14px 18px;
+      border-radius: 0 8px 8px 0;
+      margin: 24px 0;
+      font-size: 0.95rem;
+    }
+
+
+    .callout.warning {
+      background: #fffbeb;
+      border-left-color: #f59e0b;
+    }
+
+    .callout.success {
+      background: #f0fdf4;
+      border-left-color: #22c55e;
+    }
+
+    .callout strong {
+      color: #1a1a1a;
+    }
+
+    /* Flow cards */
+    .flow-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-top: 20px;
+    }
+
+    @media (max-width: 768px) {
+      .flow-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 520px) {
+      .flow-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .flow-card {
+      position: relative;
+      padding-top: 36px;
+    }
+
+    .flow-card::before {
+      content: attr(data-step);
+      position: absolute;
+      top: 12px;
+      left: 16px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #0369a1;
+    }
+
+    .flow-card h4, .risk-card h4, .mvp-card h4 {
+      font-size: 13px;
+      font-weight: 700;
+      color: #111;
+      margin-bottom: 6px;
+      margin-top: 0;
+    }
+
+    .flow-card p {
+      margin: 0;
+      font-size: 0.9375rem;
+      color: #555;
+      line-height: 1.55;
+    }
+
+    .courier-list {
+      margin: 12px 0 0;
+      padding-left: 1.2em;
+      color: #555;
+    }
+
+    .courier-list li {
+      margin-bottom: 8px;
+    }
+
+    /* Tables */
+    .table-wrap {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      margin: 16px 0;
+      border-radius: 8px;
+      border: 1px solid #eee;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    th {
+      background: #f0f0f0;
+      padding: 9px 12px;
+      text-align: left;
+      font-weight: 600;
+      color: #555;
+      border-bottom: 2px solid #ddd;
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    td {
+      padding: 10px 12px;
+      border-bottom: 1px solid #eee;
+      vertical-align: top;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: #f9f9f9; }
+
+    /* Rollback severity */
+    tr.rb-warn td.severity-cell {
+      border-left: 6px solid #CA8A04;
+      background: rgba(234, 179, 8, 0.22);
+      font-weight: 600;
+      color: #713F12;
+    }
+
+    tr.rb-orange td.severity-cell {
+      border-left: 6px solid #EA580C;
+      background: rgba(249, 115, 22, 0.2);
+      font-weight: 600;
+      color: #9A3412;
+    }
+
+    tr.rb-critical td.severity-cell {
+      border-left: 6px solid #DC2626;
+      background: rgba(220, 38, 38, 0.14);
+      font-weight: 700;
+      color: #991B1B;
+    }
+
+    /* Badges */
+    .badge { display: inline-block; font-size: 11px; font-weight: 700; padding: 3px 9px; border-radius: 12px; letter-spacing: 0.04em; }
+    .badge.green  { background: #dcfce7; color: #16a34a; }
+    .badge.amber  { background: #fef9c3; color: #a16207; }
+    .badge.orange { background: #ffedd5; color: #c2410c; }
+    .badge.red    { background: #fee2e2; color: #dc2626; }
+    .badge.gray   { background: #f1f5f9; color: #64748b; }
+
+    /* Primary metrics table */
+    table.table-primary-metrics {
+      table-layout: fixed;
+      width: 100%;
+    }
+
+    table.table-primary-metrics th,
+    table.table-primary-metrics td {
+      overflow-wrap: break-word;
+      word-break: normal;
+      hyphens: auto;
+      vertical-align: top;
+    }
+
+    table.table-primary-metrics th:nth-child(1),
+    table.table-primary-metrics td:nth-child(1) { width: 26%; }
+    table.table-primary-metrics th:nth-child(2),
+    table.table-primary-metrics td:nth-child(2) { width: 36%; }
+    table.table-primary-metrics th:nth-child(3),
+    table.table-primary-metrics td:nth-child(3) { width: 13%; }
+    table.table-primary-metrics th:nth-child(4),
+    table.table-primary-metrics td:nth-child(4) { width: 25%; }
+
+    @media (max-width: 720px) {
+      table.table-primary-metrics {
+        table-layout: auto;
+      }
+      table.table-primary-metrics th:nth-child(n),
+      table.table-primary-metrics td:nth-child(n) { width: auto; }
+    }
+
+    /* Risk cards */
+    .risk-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-top: 20px;
+    }
+
+    @media (max-width: 768px) {
+      .risk-grid { grid-template-columns: 1fr; }
+    }
+
+    .risk-card {
+      border-top: 4px solid #f59e0b;
+    }
+
+    .risk-card p {
+      margin: 0 0 8px;
+      font-size: 0.9rem;
+      color: #555;
+    }
+
+    .risk-card .mit {
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px dashed #eee;
+      font-size: 0.88rem;
+      color: #1a1a1a;
+    }
+
+    .risk-card .mit::before {
+      content: 'Митигация: ';
+      font-weight: 700;
+      color: #22c55e;
+    }
+
+    /* MVP */
+    .mvp-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-top: 20px;
+    }
+
+    @media (max-width: 768px) {
+      .mvp-grid { grid-template-columns: 1fr; }
+    }
+
+    .mvp-card ul {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .mvp-card li {
+      padding: 8px 0 8px 28px;
+      position: relative;
+      font-size: 0.92rem;
+      border-bottom: 1px solid #f3f4f6;
+    }
+
+    .mvp-card li:last-child { border-bottom: none; }
+
+    .mvp-in li::before {
+      content: '✓';
+      position: absolute;
+      left: 0;
+      color: #22c55e;
+      font-weight: 700;
+    }
+
+    .mvp-out li::before {
+      content: '✕';
+      position: absolute;
+      left: 0;
+      color: #9CA3AF;
+      font-weight: 700;
+    }
+
+    .text-muted {
+      color: #666;
+      font-size: 0.9375rem;
+    }
+
+    /* Ideas subsection */
+    .idea-block {
+      border-left: 3px solid #d1d5db;
+      padding-left: 20px;
+      margin-bottom: 36px;
+    }
+
+    .idea-block h4 {
+      margin: 0 0 12px;
+      font-size: 1rem;
+      font-weight: 700;
+      color: #1a1a1a;
+    }
+
+    .idea-block > p {
+      margin: 0 0 0.65em;
+      color: #1a1a1a;
+      font-size: 0.9375rem;
+      line-height: 1.6;
+    }
+
+    .idea-block > p:last-child { margin-bottom: 0; }
+
+    .idea-block ul {
+      margin: 8px 0;
+      padding-left: 1.2em;
+      color: #555;
+      font-size: 0.9375rem;
+      line-height: 1.55;
+    }
+
+    footer {
+      padding: 40px 20px 56px;
+      text-align: center;
+      color: #555;
+      font-size: 0.9rem;
+      border-top: 1px solid #eee;
+      background: #fff;
+    }
+
+    footer strong { color: #1a1a1a; }
+
+    @media print {
+      .site-nav, .hero-badges { display: none !important; }
+      html { scroll-behavior: auto; }
+      body { background: #fff; color: #000; font-size: 11pt; }
+      .hero { background: #fff !important; color: #000 !important; padding: 24px 0; }
+      .hero .lead { color: #000 !important; }
+      .card, .flow-card, .risk-card, .mvp-card, .idea-block, .table-wrap {
+        box-shadow: none !important;
+        border: 1px solid #ccc;
+      }
+      section { padding: 24px 0; page-break-inside: avoid; }
+      th { position: static; }
+    }
+
+    /* === Мокапы === */
+
+    /* Блок 1: Схема «Два курьера» */
+    .flow-diagram {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      overflow-x: auto;
+      padding: 24px 0 8px;
+    }
+
+    .flow-step {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      min-width: 100px;
+      gap: 8px;
+    }
+
+    .flow-step--accent .flow-icon {
+      background: #fffbeb;
+      border-color: #fde68a;
+      box-shadow: 0 0 0 3px #fef9c3;
+    }
+
+    .flow-icon {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: #f4f4f4;
+      border: 2px solid #e5e7eb;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      flex-shrink: 0;
+    }
+
+    .flow-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: #1a1a1a;
+      line-height: 1.4;
+    }
+
+    .flow-label span {
+      font-size: 11px;
+      font-weight: 400;
+      color: #888;
+    }
+
+    .flow-arrow {
+      font-size: 20px;
+      color: #ccc;
+      flex-shrink: 0;
+      padding: 0 4px;
+      margin-bottom: 20px;
+    }
+
+    .flow-notes {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    @media (max-width: 768px) {
+      .flow-notes { grid-template-columns: 1fr; }
+      .flow-diagram { gap: 4px; }
+      .flow-step { min-width: 72px; }
+      .flow-icon { width: 44px; height: 44px; font-size: 18px; }
+    }
+
+    .flow-note {
+      font-size: 12px;
+      line-height: 1.5;
+      padding: 10px 14px;
+      border-radius: 8px;
+      border: 1px solid #eee;
+      background: #f9f9f9;
+    }
+
+    .flow-note--green  { background: #f0fdf4; border-color: #bbf7d0; }
+    .flow-note--blue   { background: #f0f9ff; border-color: #bae6fd; }
+    .flow-note--amber  { background: #fffbeb; border-color: #fde68a; }
+
+    .flow-note strong { display: block; margin-bottom: 2px; font-size: 12px; }
+
+    /* Блок 2: Мокап клиента */
+    .mockup-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .phone-frame {
+      width: 260px;
+      background: #1a1a1a;
+      border-radius: 36px;
+      padding: 10px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+    }
+
+    .phone-screen {
+      background: #fff;
+      border-radius: 28px;
+      overflow: hidden;
+      min-height: 480px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .phone-statusbar {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 16px 4px;
+      font-size: 10px;
+      font-weight: 600;
+      color: #1a1a1a;
+      background: #fff;
+    }
+
+    .phone-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 4px 16px 8px;
+      border-bottom: 1px solid #f0f0f0;
+    }
+
+    .phone-back { font-size: 20px; color: #555; cursor: default; }
+    .phone-title { font-size: 15px; font-weight: 700; }
+
+    .phone-order-info {
+      padding: 12px 16px 8px;
+      background: #f8f8f8;
+    }
+
+    .phone-order-tag  { font-size: 11px; color: #888; }
+    .phone-order-items { font-size: 13px; font-weight: 600; margin-top: 2px; }
+
+    .phone-items {
+      flex: 1;
+      padding: 8px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .phone-item {
+      font-size: 11px;
+      padding: 7px 10px;
+      border-radius: 8px;
+      background: #f9f9f9;
+      border: 1px solid #eee;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      line-height: 1.4;
+    }
+
+    .phone-hold-notice {
+      font-size: 10px;
+      color: #0369a1;
+      background: #f0f9ff;
+      border-top: 1px solid #bae6fd;
+      padding: 8px 16px;
+      text-align: center;
+    }
+
+    .phone-cta {
+      padding: 10px 16px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .phone-btn {
+      background: #1a1a1a;
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      padding: 12px;
+      font-size: 13px;
+      font-weight: 700;
+      width: 100%;
+      cursor: default;
+    }
+
+    .phone-btn-hint {
+      font-size: 10px;
+      color: #888;
+      text-align: center;
+    }
+
+    .mockup-caption {
+      font-size: 12px;
+      color: #888;
+      text-align: center;
+      max-width: 260px;
+      line-height: 1.5;
+    }
+
+    /* Блок 3: Мокапы курьера */
+    .mockups-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 32px;
+      justify-items: center;
+      margin-top: 16px;
+    }
+
+    @media (max-width: 600px) {
+      .mockups-grid { grid-template-columns: 1fr; }
+    }
+
+    .mockup-label {
+      font-size: 11px;
+      font-weight: 700;
+      color: #555;
+      text-align: center;
+      margin-bottom: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .courier-route {
+      flex: 1;
+      padding: 12px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .courier-stop {
+      display: flex;
+      gap: 10px;
+      padding-bottom: 14px;
+      position: relative;
+    }
+
+    .courier-stop:not(:last-child)::before {
+      content: '';
+      position: absolute;
+      left: 7px;
+      top: 16px;
+      bottom: 0;
+      width: 2px;
+      background: #eee;
+    }
+
+    .courier-stop-dot {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      margin-top: 2px;
+      border: 2px solid #eee;
+      background: #fff;
+    }
+    .courier-stop-dot.done   { background: #22c55e; border-color: #22c55e; }
+    .courier-stop-dot.active { background: #f59e0b; border-color: #f59e0b; }
+    .courier-stop-dot.next   { background: #fff;    border-color: #94a3b8; }
+
+    .courier-stop-info { display: flex; flex-direction: column; gap: 3px; }
+    .stop-addr  { font-size: 12px; font-weight: 600; }
+    .stop-sub   { font-size: 10px; color: #888; }
+    .done-label { font-size: 10px; color: #15803d; font-weight: 600; }
+
+    .stop-badge {
+      display: inline-block;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 10px;
+      width: fit-content;
+    }
+    .stop-badge.long-fitting {
+      background: #fffbeb;
+      border: 1px solid #fde68a;
+      color: #b45309;
+    }
+
+    .push-overlay {
+      position: relative;
+      z-index: 10;
+      padding: 8px 10px 0;
+    }
+
+    .push-card {
+      background: rgba(245,245,245,0.97);
+      border-radius: 14px;
+      padding: 12px 14px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+      backdrop-filter: blur(8px);
+    }
+
+    .push-app   { font-size: 10px; color: #888; margin-bottom: 4px; }
+    .push-title { font-size: 13px; font-weight: 700; }
+    .push-body  { font-size: 11px; color: #555; margin-top: 2px; }
+
+    .push-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .push-btn {
+      flex: 1;
+      padding: 7px;
+      border-radius: 8px;
+      border: none;
+      font-size: 11px;
+      font-weight: 700;
+      cursor: default;
+    }
+
+    .push-btn--accept  { background: #1a1a1a; color: #fff; }
+    .push-btn--decline { background: #eee;    color: #555; }
+
+    .courier-map {
+      flex: 1;
+      background: #e8f0e8;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .map-placeholder {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      font-size: 28px;
+    }
+
+    .courier-footer {
+      padding: 8px 16px 12px;
+      border-top: 1px solid #f0f0f0;
+    }
+
+    .courier-earn { font-size: 11px; color: #888; }
+    .courier-earn strong { color: #1a1a1a; }
+    /* ── Checkout mockup comparison ── */
+    .co-compare {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 32px;
+      align-items: start;
+      margin-top: 24px;
+    }
+    @media (max-width: 640px) { .co-compare { grid-template-columns: 1fr; } }
+
+    .co-col { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+
+    .co-label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      padding: 4px 12px;
+      border-radius: 20px;
+    }
+    .co-label.before { background: #fee2e2; color: #dc2626; }
+    .co-label.after  { background: #dcfce7; color: #16a34a; }
+
+    /* compact phone */
+    .co-phone {
+      width: 240px;
+      background: #1a1a1a;
+      border-radius: 34px;
+      padding: 10px;
+      box-shadow: 0 8px 32px rgba(0,0,0,.18);
+    }
+    .co-phone.new { background: #111; }
+    .co-phone::before {
+      content: '';
+      display: block;
+      width: 48px; height: 5px;
+      background: #333;
+      border-radius: 3px;
+      margin: 0 auto 7px;
+    }
+    .co-screen {
+      background: #fff;
+      border-radius: 26px;
+      padding: 14px 12px 16px;
+      overflow: hidden;
+    }
+
+    /* micro UI primitives */
+    .co-logo { font-size: 10px; font-weight: 900; letter-spacing: 2px; text-align: center; margin-bottom: 10px; color: #111; }
+    .co-section { font-size: 12px; font-weight: 700; color: #111; margin: 8px 0 6px; }
+    .co-tabs { display: flex; gap: 5px; margin-bottom: 8px; }
+    .co-tab {
+      flex: 1; border-radius: 8px; padding: 7px 4px;
+      text-align: center; font-size: 9px; font-weight: 700;
+    }
+    .co-tab.active  { background: #111; color: #fff; }
+    .co-tab.passive { border: 1px solid #e0e0e0; color: #888; }
+
+    .co-row {
+      display: flex; align-items: flex-start; gap: 7px;
+      border: 1px solid #eee; border-radius: 8px;
+      padding: 8px 9px; margin-bottom: 5px;
+      background: #fff; cursor: default;
+    }
+    .co-row.selected { border-color: #111; background: #fafafa; }
+    .co-row.selected.green { border-color: #22c55e; background: #f0fdf4; }
+
+    .co-dot {
+      width: 10px; height: 10px; border-radius: 50%;
+      border: 2px solid #ccc; flex-shrink: 0; margin-top: 2px;
+    }
+    .co-dot.filled { background: #111; border-color: #111; }
+    .co-dot.green  { background: #22c55e; border-color: #22c55e; }
+
+    .co-row-body { flex: 1; }
+    .co-row-title { font-size: 10px; font-weight: 700; color: #111; line-height: 1.3; }
+    .co-row-sub   { font-size: 9px; color: #777; margin-top: 2px; line-height: 1.4; }
+    .co-row-badge {
+      font-size: 8px; font-weight: 700;
+      padding: 2px 6px; border-radius: 4px;
+      display: inline-block; margin-top: 3px;
+    }
+    .co-row-badge.green { background: #dcfce7; color: #16a34a; }
+    .co-row-badge.blue  { background: #dbeafe; color: #1d4ed8; }
+    .co-row-badge.amber { background: #fef9c3; color: #a16207; }
+
+    .co-price { font-size: 9px; font-weight: 700; color: #111; white-space: nowrap; }
+    .co-price.extra { color: #555; font-weight: 600; }
+
+    .co-divider { border: none; border-top: 1px solid #f0f0f0; margin: 8px 0; }
+    .co-total-row { display: flex; justify-content: space-between; font-size: 9px; color: #555; margin-bottom: 3px; }
+    .co-total-row.bold { font-size: 11px; font-weight: 700; color: #111; }
+
+    .co-btn {
+      background: #111; color: #fff;
+      border-radius: 10px; padding: 10px;
+      text-align: center; font-size: 11px; font-weight: 700;
+      margin-top: 8px; cursor: default;
+    }
+
+    .co-note {
+      font-size: 9px; color: #888; text-align: center; margin-top: 6px; line-height: 1.4;
+    }
+
+    .co-caption {
+      font-size: 12px; color: #555; text-align: center;
+      max-width: 240px; line-height: 1.5;
+    }
+
+  </style>
+</head>
+<body>
+
+  <nav class="site-nav" aria-label="Основная навигация">
+    <div class="site-nav-inner">
+      <span class="nav-author">Скринник М.А. · Тестовое Lamoda</span>
+      <a href="#why">Почему эта фича</a>
+      <a href="#problem">Аналитика</a>
+      <a href="#economics">Экономика</a>
+      <a href="#metrics">Метрики</a>
+      <a href="#risks">Риски</a>
+      <a href="#mvp">MVP</a>
+      <a href="#pilot">Пилот</a>
+      <a href="#rollback">Откат</a>
+      <a href="#ideas">Идеи</a>
+      <a href="#mockups">Мокапы</a>
+    </div>
+  </nav>
+
+  <header class="hero">
+    <div class="hero-inner">
+      <h1>Расширенный слот примерки при курьерской доставке</h1>
+      <p class="lead">Клиентам с большими заказами не хватает 15 минут. Как решить без потери экономики курьерской доставки &nbsp;<code>v1.0</code></p>
+      <p>15 минут стандартного слота — структурно мало для заказов от 5 позиций. Это уходит в конфликты с курьером, низкий NPS и потерянные покупки. Документ разбирает проблему от количественной оценки сегмента до выбора механики, расчёта стоимости, MVP и условий отката.</p>
+      <div class="hero-badges">
+        <span class="hero-badge discovery">Discovery</span>
+        <span class="hero-badge delivery">Delivery</span>
+        <span class="hero-badge ab">A/B тест</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap">
+
+    <!-- ======================================================
+         00. ПОЧЕМУ ЭТА ФИЧА
+    ======================================================= -->
+    <section id="why">
+      <span class="section-badge">00</span>
+      <h2>Почему эта фича — и почему сейчас</h2>
+      <div class="card">
+        <p>Прежде чем выбирать механику, нужно ответить на вопрос: <strong>стоит ли вообще идти в это направление?</strong> У нас несколько подходов к проблеме нехватки времени примерки — от надбавки на чекауте до двух курьеров. Выбор между ними определяется двумя вещами: размером проблемного сегмента и стоимостью решения.</p>
+        <div class="callout">
+          <strong>Логика выбора:</strong> сначала оцениваем сегмент — если это 7–10% доставок с примеркой, проблема системная и её стоит решать. Потом считаем, что дешевле: курьер ждёт или едет дважды. Ответ определяет, в какую ветку мы идём. Только после этого — конкретный MVP.
+        </div>
+        <p>Альтернативные подходы на рынке: увеличение стандартного слота для всех, партнёрский сбор возвратов, постаматы возврата. Все они или дороже, или не масштабируются на все типы заказов, или требуют инфраструктурных изменений. <strong>новый тип сервиса доставки с расширенным слотом на чекауте</strong> — минимальная точка входа: платит только нуждающийся, курьер знает о слоте заранее, маршрут строится с учётом.</p>
+      </div>
+
+      <h3>Как решают другие</h3>
+      <p style="margin-bottom:12px;color:#555;font-size:0.9375rem;">Четыре устоявшихся подхода к проблеме «времени примерки» на глобальном рынке.</p>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Подход</th>
+              <th>Кто применяет</th>
+              <th>Как работает</th>
+              <th>Почему не первый шаг для Lamoda</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Try Before You Buy</strong></td>
+              <td>Amazon (закрыт янв 2025)</td>
+              <td>7 дней на примерку дома, курьер не ждёт — доставка и возврат разделены во времени</td>
+              <td>Закрыт из-за дороговизны двойных рейсов и плохой масштабируемости. Требует отдельной логистики возвратов</td>
+            </tr>
+            <tr>
+              <td><strong>BNPL-примерка</strong></td>
+              <td>ASOS + Klarna</td>
+              <td>Купи сейчас, 30 дней до оплаты, возврат бесплатно — проблема решается через финтех, не логистику</td>
+              <td>Требует финансового партнёра и готовности держать receivables на балансе. Нет в текущей архитектуре</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <h3>Приоритизация подходов</h3>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Подход</th>
+              <th>Сложность</th>
+              <th>Время</th>
+              <th>Потенциал</th>
+              <th>Рекомендация</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Оценить сегмент (данные)</td>
+              <td>Низкая</td>
+              <td>1–2 недели</td>
+              <td>—</td>
+              <td><strong>Обязательно первым</strong></td>
+            </tr>
+            <tr>
+              <td>Добровольный выбор слота при оформлении (+X ₽)</td>
+              <td>Низкая</td>
+              <td>3–4 недели</td>
+              <td>Средний</td>
+              <td><strong>MVP для проверки спроса</strong></td>
+            </tr>
+            <tr>
+              <td>Авто-расширение по числу позиций</td>
+              <td>Средняя</td>
+              <td>4–6 недель</td>
+              <td>Высокий</td>
+              <td>После MVP</td>
+            </tr>
+            <tr>
+              <td>Два курьера (доставка + пикап)</td>
+              <td>Высокая</td>
+              <td>3–6 мес.</td>
+              <td>Очень высокий</td>
+              <td>После подтверждения гипотезы</td>
+            </tr>
+            <tr>
+              <td>Партнёрский сбор возвратов</td>
+              <td>Очень высокая</td>
+              <td>6+ мес.</td>
+              <td>Стратегический</td>
+              <td>Отдельная инициатива</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ======================================================
+         01. АНАЛИТИКА ПРОБЛЕМЫ
+    ======================================================= -->
+    <section id="problem">
+      <span class="section-badge">01</span>
+      <h2>Аналитика проблемы</h2>
+      <p class="text-muted">Портрет заказа, который вызывает ситуацию нехватки времени примерки, и оценка доли таких заказов.</p>
+
+      <div class="card">
+        <p>Не каждый заказ с примеркой создаёт конфликт. Нехватка времени — структурное свойство конкретного сегмента. Нужно понять его размер, чтобы оценить масштаб задачи и принять решение о целесообразности.</p>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Признак проблемного заказа</th>
+                <th>Порог</th>
+                <th>Почему важен</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Количество позиций</td>
+                <td>≥ 5 айтемов</td>
+                <td>2–3 мин на вещь → 15 мин стандартного слота не хватает физически</td>
+              </tr>
+              <tr>
+                <td>Тип товаров</td>
+                <td>Верхняя одежда, обувь, костюмы</td>
+                <td>Требуют примерки в комплекте — сложно оценить по одному</td>
+              </tr>
+              <tr>
+                <td>Сумма заказа</td>
+                <td>&gt; 8 000 ₽</td>
+                <td>Дорогая покупка → клиент не торопится, хочет быть уверен</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="callout">
+          <strong>Оценка доли:</strong> заказы с 5+ позициями — ориентировочно <strong>20–30%</strong> от всех доставок с примеркой. Из них конфликт «не хватило времени» возникает примерно в каждом третьем случае. Итоговый проблемный сегмент — <strong>~7–10%</strong> доставок с примеркой.
+        </div>
+      </div>
+
+      <h3>Откуда берём данные</h3>
+      <ul class="courier-list" style="color:#1a1a1a;">
+        <li><strong>Курьерское приложение — фактическое время на заказе:</strong> лучший источник вводных по реальной длительности примерки. Приложение фиксирует timestamp прибытия и завершения точки → получаем фактический диапазон времени в разбивке по числу позиций, категориям товаров и суммам заказов. Это позволяет не гадать про «2–3 мин на вещь», а взять реальное распределение и найти порог X, с которого 15 минут стабильно не хватает.</li>
+        <li>CRM-теги — обращения с темой «курьер торопил», «не успел примерить»</li>
+        <li>Post-delivery опрос — вопрос «Хватило ли времени?» (~200 ответов дадут репрезентативную картину)</li>
+        <li>NPS курьерской доставки — в разбивке по числу позиций в заказе</li>
+      </ul>
+      <div class="callout warning">
+        <strong>Важно:</strong> жалобы в поддержку — не все недовольные, а только написавшие. Реальный масштаб проблемы выше видимого. Без данных из опроса риск либо переоценить, либо недооценить проблему.
+      </div>
+    </section>
+
+    <!-- ======================================================
+         02. ЭКОНОМИКА
+    ======================================================= -->
+    <section id="economics">
+      <span class="section-badge">02</span>
+      <h2>Что дешевле: курьер за дверью или два рейса?</h2>
+      <p class="text-muted">Сегмент оценён — 7–10% доставок с примеркой, ~70–100 конфликтных ситуаций в неделю. Это системная проблема, которую стоит решать. Следующий вопрос: какая механика дешевле? Два сценария с разной ценой — расчёт определяет, в какую ветку мы идём.</p>
+
+      <div class="card">
+        <p>Базовый параметр — <strong>стоимость одной точки маршрута (CPS, cost per stop)</strong>: переменные затраты на одно адресное посещение (ГСМ / аккумулятор + время курьера + накладные). Рыночный диапазон: <strong>80–150 ₽</strong> за точку.</p>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Что считаем</th>
+                <th>Опция А — курьер ждёт (+20 мин)</th>
+                <th>Опция Б — два рейса</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Точек маршрута</td>
+                <td>1 × CPS</td>
+                <td>2 × CPS — доставка + отдельный пикап</td>
+              </tr>
+              <tr>
+                <td>Допзатраты</td>
+                <td>Ожидание: 20 мин × 3 ₽/мин = 60 ₽</td>
+                <td>Пустой пробег до точки: ~3 км × 10 ₽/км = 30 ₽</td>
+              </tr>
+              <tr>
+                <td><strong>Итого при CPS = 100 ₽</strong></td>
+                <td><strong>160 ₽</strong></td>
+                <td><strong>230 ₽</strong></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p style="margin:12px 0 0;font-size:0.88rem;color:#555;"><strong>Формула:</strong> <code>А = CPS + T_wait × rate_wait</code> &nbsp;|&nbsp; <code>Б = 2 × CPS + D_empty × rate_km</code> — Опция А дешевле примерно на <strong>30%</strong>. Разрыв растёт с расстоянием между точками маршрута.</p>
+        <div class="callout success" style="margin-top:20px;">
+          <strong>Как нивелировать оверхед Опции А:</strong> надбавка +49–99 ₽ к стоимости доставки для заказов 5+ айтемов или суммой &gt;8 000 ₽ полностью покрывает стоимость ожидания. Клиент с большой корзиной менее чувствителен к цене доставки — это типичный паттерн e-commerce. Lamoda не несёт убытка на расширенном слоте.
+        </div>
+        <p><strong>Вывод:</strong> идём в Опцию А — opt-in слот на чекауте с надбавкой. Это дешевле, проще в реализации и проверяемо через A/B. Два рейса (Опция Б) — следующий этап при наличии инфраструктуры диспетчеризации.</p>
+      </div>
+    </section>
+
+    <!-- ======================================================
+         03. МЕТРИКИ И ЭФФЕКТ
+    ======================================================= -->
+    <section id="metrics">
+      <span class="section-badge">03</span>
+      <h2>Метрики и эффект</h2>
+      <p class="text-muted">Механика выбрана — opt-in слот на чекауте. Теперь фиксируем, что именно считаем успехом и провалом, чтобы A/B-тест дал однозначный ответ.</p>
+      <div class="callout">
+        <strong>Логика влияния:</strong> убираем структурный дефицит времени у проблемного сегмента. Клиент принимает решение не под давлением таймера — растёт конверсия в покупку, падает RRR, снижается конфликтность с курьером.
+      </div>
+
+      <h3>Что должно вырасти</h3>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Метрика</th>
+              <th>Направление</th>
+              <th>Логика</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Конверсия в покупку при примерке</td>
+              <td><span class="badge green">↑ растёт</span></td>
+              <td>Клиент не решает под давлением таймера → выше вероятность оставить вещь</td>
+            </tr>
+            <tr>
+              <td>NPS курьерской доставки</td>
+              <td><span class="badge green">↑ растёт</span></td>
+              <td>Убираем конфликт «курьер торопил» — главная причина негативных оценок в сегменте</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>Что должно упасть</h3>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Метрика</th>
+              <th>Направление</th>
+              <th>Логика</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>RRR (отказы и возвраты при примерке)</td>
+              <td><span class="badge green">↓ падает</span></td>
+              <td>Больше времени → взвешенное решение → меньше «беру на авось» и «отдаю не глядя»</td>
+            </tr>
+            <tr>
+              <td>Доля заказов с конфликтом при примерке</td>
+              <td><span class="badge green">↓ падает</span></td>
+              <td>Цель −30% к baseline ~8–12% (жалобы: «торопил», «не успел»)</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>Под контролем</h3>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Метрика</th>
+              <th>Статус</th>
+              <th>Логика</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>CPO</td>
+              <td><span class="badge amber">→ под контролем</span></td>
+              <td>Надбавка покрывает оверхед, но абьюз может ломать баланс — мониторить с первого дня</td>
+            </tr>
+            <tr>
+              <td>OTD</td>
+              <td><span class="badge amber">→ под контролем</span></td>
+              <td>Долгое ожидание сдвигает следующие точки — ранний сигнал системной проблемы</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p class="text-muted" style="margin-top:16px;"><strong>Инструмент измерения:</strong> post-delivery опрос, CRM-теги обращений, аналитика чекаута, мониторинг маршрутных KPI курьера.</p>
+    </section>
+
+    <!-- ======================================================
+         04. РИСКИ И ОГРАНИЧЕНИЯ
+    ======================================================= -->
+    <section id="risks">
+      <span class="section-badge">04</span>
+      <h2>Риски и ограничения</h2>
+      <p class="text-muted">Что может пойти не так при запуске — с оценкой серьёзности и митигацией.</p>
+
+      <div class="risk-grid">
+        <article class="risk-card">
+          <h4>Абьюз слота</h4>
+          <p>Клиент использует расширенный слот как удобство, а не для примерки: «подожди, я ещё не готова».</p>
+          <p><strong>Severity:</strong> <span class="badge orange">Высокий</span></p>
+          <p class="mit">Один расширенный слот на заказ — повторно недоступен. Мониторинг: доля заказов с фактическим ожиданием &gt;25 мин как сигнал абьюза.</p>
+        </article>
+        <article class="risk-card">
+          <h4>Клиент выходит за рамки слота</h4>
+          <p>Не уложился и в расширенное время — курьер ждёт сверх договорённости, возникает конфликт.</p>
+          <p><strong>Severity:</strong> <span class="badge amber">Средний</span></p>
+          <p class="mit">Таймер в приложении клиента с визуальным отсчётом. По истечении слота — уведомление курьеру с опцией «предложить перенос».</p>
+        </article>
+        <article class="risk-card">
+          <h4>Рост CPO</h4>
+          <p>Время на точке растёт → затраты на маршрут растут. При масштабировании надбавка может не перекрыть оверхед.</p>
+          <p><strong>Severity:</strong> <span class="badge orange">Высокий</span></p>
+          <p class="mit">Мониторинг CPO с первой недели теста как hard-stop. Если тариф надбавки не покрывает — корректируем цену до масштабирования.</p>
+        </article>
+        <article class="risk-card">
+          <h4>Падение OTD</h4>
+          <p>Курьер задерживается на точке → опаздывает на следующие → страдают клиенты без расширенного слота.</p>
+          <p><strong>Severity:</strong> <span class="badge red">Критический</span></p>
+          <p class="mit">Мониторинг OTD с разбивкой по маршрутам с расширенными слотами. Триггер паузы: OTD упал на &gt;3 п.п. в тестовой группе.</p>
+        </article>
+        <article class="risk-card">
+          <h4>Загрязнение теста из-за курьеров</h4>
+          <p>Плохая подготовка — часть курьеров уходит раньше, торопит клиента, не выставляет статус. NPS и CSAT падают не из-за фичи, а из-за её неправильного исполнения.</p>
+          <p><strong>Severity:</strong> <span class="badge red">Критический</span></p>
+          <p class="mit">Обязательный онбординг-экран в курьерском приложении до старта теста. Мониторинг: доля заказов с ожиданием &lt;5 мин при 30-минутном слоте — сигнал нарушения. Такие заказы исключать из расчёта метрик или выделять в отдельный кластер.</p>
+        </article>
+        <article class="risk-card">
+          <h4>Ценовая чувствительность</h4>
+          <p>Надбавка воспринимается как барьер — пользователи видят опцию и уходят с чекаута.</p>
+          <p><strong>Severity:</strong> <span class="badge amber">Средний</span></p>
+          <p class="mit">Мониторинг CVR на шаге выбора доставки. Если &gt;30% видевших опцию уходят — ревизия тарифа. Это сигнал пересмотра цены, не отката фичи.</p>
+        </article>
+        <article class="risk-card">
+          <h4>Фрод — подмена товара</h4>
+          <p>Расширенное время пребывания вещи у клиента увеличивает окно для подмены: клиент заменяет брендовый товар на аналог, дефектный или использованный. Чем дольше курьер ждёт — тем больше времени на манипуляцию. При масштабировании фичи объём подмен будет расти пропорционально.</p>
+          <p><strong>Severity:</strong> <span class="badge red">Критический</span></p>
+          <p class="mit">Мониторинг доли претензий по качеству товара в заказах с расширенным слотом vs стандартным — аномальный рост = сигнал фрода. Фото-фиксация товара курьером при передаче (если нет — добавить в онбординг). В перспективе: весовой контроль или QR-пломбы на дорогостоящих позициях.</p>
+        </article>
+        <article class="risk-card" style="border-top-color: #ea580c;">
+          <h4>Падение заработка курьера</h4>
+          <p>Если курьер получает оплату за точку маршрута (per stop), расширенный слот не добавляет ему точку — он дольше стоит на одной. Маршрут укорачивается → меньше точек за смену → падает дневной заработок → отток курьеров с длинных заказов или с платформы.</p>
+          <p><strong>Severity:</strong> <span class="badge orange">Высокий</span></p>
+          <p class="mit">Компенсация за время ожидания сверх базового слота идёт курьеру отдельной строкой выплаты — не теряется в тарифе. Онбординг-коммуникация до запуска: расширенный слот = дополнительный заработок, не штраф за медленную точку.</p>
+        </article>
+      </div>
+
+      <div class="callout" style="margin-top:24px;">
+        <strong>Митигация через мониторинг:</strong> первые 5–7 дней — ежедневный контроль CPO, OTD и среднего времени ожидания на точке. Первый выброс = пауза, разбор, решение.
+      </div>
+    </section>
+
+    <!-- ======================================================
+         05. MVP
+    ======================================================= -->
+    <section id="mvp">
+      <span class="section-badge">05</span>
+      <h2>MVP</h2>
+      <p class="text-muted"><strong>Принцип:</strong> проверить, что платный расширенный слот востребован и не ломает экономику маршрута — без перестройки логистического движка.</p>
+
+      <div class="card">
+        <p>Минимальная реализация — два шага: выбор слота клиентом на чекауте и пометка курьеру в маршрутном листе. Никакой push-логики в реальном времени, никакого авто-пересчёта маршрута.</p>
+        <div class="flow-grid" aria-label="MVP флоу расширенного слота">
+          <div class="flow-card" data-step="Шаг 1">
+            <h4>Клиент на чекауте</h4>
+            <p>При заказе 5+ айтемов — дополнительный вариант доставки: «Расширенная примерка · 30 мин · +X ₽». Осознанный opt-in до оформления.</p>
+          </div>
+          <div class="flow-card" data-step="Шаг 2">
+            <h4>Курьер в маршрутном листе</h4>
+            <p>На точке с расширенным слотом — пометка «Долгая примерка · 30 мин» и скорректированное ETA следующей остановки. Курьер знает заранее, сюрприза нет.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout" style="margin-top:24px;">
+        <strong>Почему так:</strong> авто-пересчёт маршрута — тяжёлый бэкенд. На MVP достаточно понять: выбирают ли клиенты опцию и держатся ли они в рамках слота. При успехе — инвестиции в логистический движок.
+      </div>
+    </section>
+
+    <!-- ======================================================
+         06. ПИЛОТНАЯ ГРУППА
+    ======================================================= -->
+    <section id="pilot">
+      <span class="section-badge">06</span>
+      <h2>Пилотная группа</h2>
+      <p class="text-muted">MVP определён, метрики зафиксированы, риски закрыты митигацией. Теперь — как именно запускать тест, чтобы результаты были статистически чистыми. A/B по <code>user_id</code> вместо регионального пилота: контролирует конфаундеры лучше, чем один регион.</p>
+
+      <div class="card">
+        <p>Катим на проблемный сегмент — пользователи с заказами от X айтемов. Фича показывается только пользователям группы B при оформлении заказа 5+ позиций.</p>
+
+        <div class="callout warning">
+          <strong>Важно: рандомизировать по <code>user_id</code>, не по <code>order_id</code>.</strong>
+          <p style="margin:10px 0 0;">Если рандомизировать по <code>order_id</code> — один пользователь может попасть в обе группы в разных заказах. После опыта расширенного слота он меняет ожидания, его оценки в следующем заказе смещены. Это contamination — метрики контроля и теста несопоставимы.</p>
+          <p style="margin:8px 0 0;"><strong>Правильно:</strong> рандомизация по <code>user_id</code>, фича показывается только пользователям группы B при заказе 5+ айтемов. Количество айтемов — стратификационная переменная для анализа постфактум, не единица рандомизации.</p>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Группа</th>
+                <th>Условие показа</th>
+                <th>Цель</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Control (A)</td>
+                <td>Стандартный слот 15 мин, без опции</td>
+                <td>Baseline по всем метрикам</td>
+              </tr>
+              <tr>
+                <td>Treatment (B) — заказ 1–4 айтема</td>
+                <td>Опция недоступна (нерелевантна)</td>
+                <td>Контроль contamination</td>
+              </tr>
+              <tr>
+                <td>Treatment (B) — заказ 5+ айтемов</td>
+                <td>На чекауте доступен расширенный слот +X ₽</td>
+                <td>Основной измеримый эффект</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p style="margin-top:16px;"><strong>Subgroup analysis после теста:</strong> смотрим эффект отдельно для «1–4 айтема» и «5+ айтемов» в обеих группах. Это даёт и чистый A/B, и понимание — для кого фича работает сильнее. Можно держать тест на всей аудитории для набора статистической значимости по двум сегментам одновременно.</p>
+      </div>
+
+      <h3>Параметры теста</h3>
+      <ul class="courier-list" style="color:#1a1a1a;">
+        <li><strong>Размер выборки:</strong> для эффекта +0.2 CSAT при σ ≈ 0.8, power 80%, α = 0.05 — ~500 заказов на группу (~2–3 недели)</li>
+        <li><strong>Продолжительность:</strong> минимум 3 недели (недельная сезонность)</li>
+        <li><strong>Ожидаемый эффект:</strong> конверсия в расширенный слот 15–30%; если &lt;10% — фича невостребована или цена слишком высокая</li>
+      </ul>
+    </section>
+
+    <!-- ======================================================
+         07. ОТКАТ НАЗАД
+    ======================================================= -->
+    <section id="rollback">
+      <span class="section-badge">07</span>
+      <h2>Откат назад</h2>
+      <p class="text-muted">Тест запущен. Что считать сигналом тревоги, что — поводом для паузы, а что — основанием для полного останова? Разграничение важно: не каждый плохой показатель означает конец фичи.</p>
+
+      <div class="callout warning" style="margin-bottom:20px;">
+        <strong>CVR в заказ — валидная метрика мониторинга, но не триггер отката.</strong> Слот выбирается на чекауте до подтверждения оплаты, поэтому надбавка видна пользователю и может влиять на завершение оформления. Если &gt;30% видевших опцию уходят — это ценовой сигнал, нужна ревизия тарифа. Не триггер полного отката — триггер пересмотра цены.
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <colgroup>
+            <col style="width: 28%">
+            <col style="width: 16%">
+            <col style="width: 18%">
+            <col style="width: 38%">
+          </colgroup>
+          <thead>
+            <tr>
+              <th>Метрика</th>
+              <th>Уровень</th>
+              <th>Порог</th>
+              <th>Действие</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="rb-warn">
+              <td>CVR чекаут → оплата</td>
+              <td class="severity-cell"><span class="badge amber">Жёлтый</span></td>
+              <td>&gt;30% видевших опцию уходят без выбора</td>
+              <td>Ревизия тарифа — цена воспринимается как барьер</td>
+            </tr>
+            <tr class="rb-warn">
+              <td>Среднее время ожидания на точке</td>
+              <td class="severity-cell"><span class="badge amber">Жёлтый</span></td>
+              <td>+20% vs контроль за 7 дней</td>
+              <td>Аудит паттернов ожидания, поиск абьюза</td>
+            </tr>
+            <tr class="rb-orange">
+              <td>CPO</td>
+              <td class="severity-cell"><span class="badge orange">Оранжевый</span></td>
+              <td>+15% vs контроль</td>
+              <td>Пересмотр ценообразования надбавки</td>
+            </tr>
+            <tr class="rb-orange">
+              <td>OTD</td>
+              <td class="severity-cell"><span class="badge orange">Оранжевый</span></td>
+              <td>−3 п.п. vs контроль</td>
+              <td>Пауза теста, анализ влияния на маршруты</td>
+            </tr>
+            <tr class="rb-orange">
+              <td>NPS курьерской доставки</td>
+              <td class="severity-cell"><span class="badge orange">Оранжевый</span></td>
+              <td>−8 пунктов vs baseline</td>
+              <td>Интервью с курьерами, проверка компенсации и онбординга</td>
+            </tr>
+            <tr class="rb-critical">
+              <td>CSAT после примерки (группа B)</td>
+              <td class="severity-cell"><span class="badge red">Красный</span></td>
+              <td>Ниже группы A через 2 недели</td>
+              <td>Остановить тест — фича не решает проблему, нужен пересмотр гипотезы</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout" style="margin-top:20px;">
+        <strong>Запуск на 100%:</strong> если за 3 недели primary метрики растут и антиметрики в норме — раскатка на всю аудиторию + инвестиции в автоматизацию маршрутов.
+      </div>
+    </section>
+
+    <!-- ======================================================
+         08. РАСШИРЕННЫЙ БЛОК ИДЕЙ
+    ======================================================= -->
+    <section id="ideas">
+      <span class="section-badge">08</span>
+      <h2>Расширенный блок идей</h2>
+      <p class="text-muted">Дорожка развития после MVP — от авто-расширения до архитектурных гипотез. MVP (opt-in слот на чекауте) — первая проверка. При успехе открываются более сложные варианты.</p>
+
+      <div class="idea-block">
+        <h4>Идея A: авто-расширение при большом заказе</h4>
+        <p>При ≥ X позиций (порог по данным) — окно 30 мин и +Y₽ к доставке, прозрачно в сумме заказа. Без opt-in: логика встроена в ценообразование доставки автоматически.</p>
+        <ul>
+          <li><strong>Нужно:</strong> порог X по истории; динамическая цена; обновление маршрутизации.</li>
+          <li><strong>Плюсы:</strong> не требует действий от клиента; меньше трения на чекауте.</li>
+          <li><strong>Риск:</strong> клиент не понимает наценку → чёткий UX-текст про число вещей и время.</li>
+          <li><strong>Когда:</strong> после подтверждения спроса на opt-in MVP.</li>
+        </ul>
+      </div>
+
+      <div class="idea-block">
+        <h4>Идея B: push-запрос продления в реальном времени</h4>
+        <p>Клиент получает push за 3 минуты до окончания стандартного слота с кнопкой «+10 минут». Курьер решает: принять или предложить перенос забора. Управляемая гибкость с компенсацией, а не просто «больше минут».</p>
+        <ul>
+          <li><strong>Плюсы:</strong> работает для любого размера заказа, а не только 5+; клиент получает выбор в нужный момент.</li>
+          <li><strong>Минусы:</strong> сложнее MVP (push-инфраструктура, логика ответа курьера, ручной буфер маршрута); риск отказа курьера создаёт негативный опыт.</li>
+          <li><strong>Ограничения дизайна:</strong> одно продление за сессию; курьер может отказать без объяснений; перенос забора только в рамках текущего рабочего дня.</li>
+          <li><strong>Когда:</strong> после авто-расширения, как надстройка для edge-cases.</li>
+        </ul>
+      </div>
+
+      <div class="idea-block">
+        <h4>Идея C: разделение доставки и забора (два курьера)</h4>
+        <p>Курьер A привозит и уходит; клиент примеряет без таймера; «Вызвать за возвратом» → курьер B как в такси. Холд суммы заказа на карте; для наложенного платежа / постоплаты — недоступно.</p>
+        <ul>
+          <li><strong>Сильные стороны:</strong> нет конфликта «ждёт»; курьер A не теряет время; курьер B — короткий пикап, можно бандлить.</li>
+          <li><strong>Сложности:</strong> две поездки; диспетчеризация; ожидание курьера B (20–40 мин); стоимость выше на ~30% (см. расчёт в секции 02).</li>
+          <li><strong>Когда:</strong> после успеха более простых вариантов (MVP + Идея A), при наличии диспетчерской инфраструктуры.</li>
+        </ul>
+      </div>
+
+      <div class="idea-block">
+        <h4>Идея D: забор партнёрскими курьерами (Лавка, Самокат)</h4>
+        <p>Lamoda везёт из дарка; возврат забирает партнёр через API. Масштаб и потенциально ниже кост на пике.</p>
+        <ul>
+          <li><strong>Риски:</strong> ответственность за вещи; фрагментированный UX; интеграция с партнёрскими системами.</li>
+          <li><strong>Вывод:</strong> скорее B2B/стратегия, не быстрый MVP.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ======================================================
+         09. МОКАПЫ
+    ======================================================= -->
+    <section id="mockups">
+      <span class="section-badge">09</span>
+      <h2>Как это выглядит</h2>
+      <p class="text-muted">Схема флоу и мокапы интерфейсов для Идеи C — разделение доставки и забора. MVP (opt-in на чекауте) интерфейсно проще: дополнительный вариант доставки на шаге оплаты и пометка в маршрутном листе курьера.</p>
+
+      <h3>Флоу: два курьера (Идея C)</h3>
+
+      <div class="flow-diagram">
+        <div class="flow-step">
+          <div class="flow-icon courier-a">🛵</div>
+          <div class="flow-label">Курьер A<br><span>доставляет</span></div>
+        </div>
+        <div class="flow-arrow">→</div>
+
+        <div class="flow-step">
+          <div class="flow-icon client">👗</div>
+          <div class="flow-label">Клиент<br><span>примеряет</span></div>
+        </div>
+        <div class="flow-arrow">→</div>
+
+        <div class="flow-step flow-step--accent">
+          <div class="flow-icon button">📲</div>
+          <div class="flow-label">«Готово,<br>вызвать курьера»<br><span>кнопка в приложении</span></div>
+        </div>
+        <div class="flow-arrow">→</div>
+
+        <div class="flow-step">
+          <div class="flow-icon algo">⚡</div>
+          <div class="flow-label">Алгоритм<br><span>ближайший свободный</span></div>
+        </div>
+        <div class="flow-arrow">→</div>
+
+        <div class="flow-step">
+          <div class="flow-icon courier-b">🛵</div>
+          <div class="flow-label">Курьер B<br><span>забирает возврат</span></div>
+        </div>
+      </div>
+
+      <div class="flow-notes">
+        <div class="flow-note flow-note--green">
+          <strong>Курьер A</strong> уходит сразу после доставки — маршрут не ломается
+        </div>
+        <div class="flow-note flow-note--blue">
+          <strong>Холд оплаты</strong> на всю сумму заказа — риска кражи нет. Только карта / онлайн-оплата
+        </div>
+        <div class="flow-note flow-note--amber">
+          <strong>Курьер B</strong> приезжает как в такси — по готовности клиента, не по расписанию
+        </div>
+      </div>
+
+      <h3 style="margin-top:40px;">Интерфейс клиента</h3>
+
+      <div class="mockup-wrap">
+        <div class="phone-frame">
+          <div class="phone-screen">
+
+            <div class="phone-statusbar">
+              <span>9:41</span>
+              <span>●●● 5G 🔋</span>
+            </div>
+
+            <div class="phone-header">
+              <span class="phone-back">‹</span>
+              <span class="phone-title">Мой заказ</span>
+            </div>
+
+            <div class="phone-order-info">
+              <div class="phone-order-tag">Заказ #8847291</div>
+              <div class="phone-order-items">5 вещей · на примерке</div>
+            </div>
+
+            <div class="phone-items">
+              <div class="phone-item phone-item--returned">
+                <span>🔵</span> Платье Zara синее · <strong style="color:#15803d">Оставляю</strong>
+              </div>
+              <div class="phone-item phone-item--keep">
+                <span>⚪</span> Блузка белая · <strong style="color:#888">Решаю...</strong>
+              </div>
+              <div class="phone-item">
+                <span>🔴</span> Юбка миди · <strong style="color:#dc2626">Возврат</strong>
+              </div>
+              <div class="phone-item">
+                <span>🔴</span> Джинсы прямые · <strong style="color:#dc2626">Возврат</strong>
+              </div>
+              <div class="phone-item phone-item--keep">
+                <span>🔵</span> Топ чёрный · <strong style="color:#15803d">Оставляю</strong>
+              </div>
+            </div>
+
+            <div class="phone-hold-notice">
+              🔒 Холд: 12 400 ₽ · Спишется за оставленные вещи
+            </div>
+
+            <div class="phone-cta">
+              <button class="phone-btn">
+                Готово — вызвать курьера
+              </button>
+              <div class="phone-btn-hint">Курьер приедет через ~15–25 мин</div>
+            </div>
+
+          </div>
+        </div>
+        <div class="mockup-caption">
+          Клиент отмечает вещи для возврата и нажимает кнопку — курьер вызывается как такси
+        </div>
+      </div>
+
+      <h3 style="margin-top:40px;">Интерфейс курьера</h3>
+      <div class="mockups-grid">
+        <div>
+          <div class="mockup-label">А — Активная примерка</div>
+          <div class="phone-frame">
+            <div class="phone-screen">
+
+              <div class="phone-statusbar">
+                <span>10:14</span><span>●●● 5G 🔋</span>
+              </div>
+
+              <div class="phone-header">
+                <span class="phone-title">Маршрут</span>
+                <span style="font-size:11px;color:#888;margin-left:auto;">3 точки</span>
+              </div>
+
+              <div class="courier-route">
+                <div class="courier-stop courier-stop--done">
+                  <div class="courier-stop-dot done"></div>
+                  <div class="courier-stop-info">
+                    <span class="stop-addr">ул. Ленина, 12</span>
+                    <span class="stop-status done-label">✓ Доставлено</span>
+                  </div>
+                </div>
+
+                <div class="courier-stop courier-stop--active">
+                  <div class="courier-stop-dot active"></div>
+                  <div class="courier-stop-info">
+                    <span class="stop-addr">пр. Мира, 45, кв.3</span>
+                    <span class="stop-badge long-fitting">⏱ Долгая примерка</span>
+                    <span class="stop-sub">Заказ #8847291 · до 10:38</span>
+                  </div>
+                </div>
+
+                <div class="courier-stop courier-stop--next">
+                  <div class="courier-stop-dot next"></div>
+                  <div class="courier-stop-info">
+                    <span class="stop-addr">ул. Гагарина, 7</span>
+                    <span class="stop-sub">~10:55 · скорректировано</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="courier-footer">
+                <div class="courier-earn">Заработок сегодня: <strong>1 240 ₽</strong></div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="mockup-label">Б — Входящая заявка на забор</div>
+          <div class="phone-frame">
+            <div class="phone-screen">
+
+              <div class="phone-statusbar">
+                <span>10:41</span><span>●●● 5G 🔋</span>
+              </div>
+
+              <div class="phone-header">
+                <span class="phone-title">Маршрут</span>
+              </div>
+
+              <div class="push-overlay">
+                <div class="push-card">
+                  <div class="push-app">📦 Lamoda Курьер</div>
+                  <div class="push-title">Новая заявка на забор</div>
+                  <div class="push-body">пр. Мира, 45 · ~0.6 км · +180 ₽</div>
+                  <div class="push-actions">
+                    <button class="push-btn push-btn--accept">Принять</button>
+                    <button class="push-btn push-btn--decline">Пропустить</button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="courier-map">
+                <div class="map-placeholder">
+                  <span>🗺</span>
+                  <span style="font-size:11px;color:#888;">Карта маршрута</span>
+                </div>
+              </div>
+
+              <div class="courier-footer">
+                <div class="courier-earn">Заработок сегодня: <strong>1 240 ₽</strong></div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Checkout mockup -->
+      <h3>Мокап чекаута: стандартный vs с расширенным слотом</h3>
+      <p class="text-muted">Как новый оффер встраивается в существующий one-page checkout Lamoda — без изменения структуры страницы. Новая строка в выборе доставки, opt-in.</p>
+
+      <div class="co-compare">
+
+        <!-- BEFORE -->
+        <div class="co-col">
+          <div class="co-label before">Сейчас</div>
+          <div class="co-phone">
+            <div class="co-screen">
+
+              <div class="co-logo">LAMODA</div>
+
+              <div class="co-tabs">
+                <div class="co-tab passive">В пункт выдачи</div>
+                <div class="co-tab active">Курьером</div>
+              </div>
+
+              <div class="co-section">Выберите время доставки</div>
+
+              <div class="co-row selected">
+                <div class="co-dot filled"></div>
+                <div class="co-row-body">
+                  <div class="co-row-title">Завтра, 14:00 – 18:00</div>
+                  <div class="co-row-sub">Стандартная доставка · 15 мин на примерку</div>
+                </div>
+                <div class="co-price">Бесплатно</div>
+              </div>
+
+              <div class="co-row">
+                <div class="co-dot"></div>
+                <div class="co-row-body">
+                  <div class="co-row-title">Завтра, 18:00 – 22:00</div>
+                  <div class="co-row-sub">Стандартная доставка · 15 мин на примерку</div>
+                </div>
+                <div class="co-price">Бесплатно</div>
+              </div>
+
+              <hr class="co-divider">
+              <div class="co-total-row"><span>5 товаров</span><span>14 990 ₽</span></div>
+              <div class="co-total-row"><span>Доставка</span><span style="color:#22c55e;">Бесплатно</span></div>
+              <div class="co-total-row bold"><span>Итого</span><span>14 990 ₽</span></div>
+              <div class="co-btn">Оплатить 14 990 ₽</div>
+              <div class="co-note">15 минут на примерку при получении</div>
+
+            </div>
+          </div>
+          <div class="co-caption">Клиент с 5 вещами видит только стандартный слот. Если не уложится — конфликт.</div>
+        </div>
+
+        <!-- AFTER -->
+        <div class="co-col">
+          <div class="co-label after">С расширенным слотом</div>
+          <div class="co-phone new">
+            <div class="co-screen">
+
+              <div class="co-logo">LAMODA</div>
+
+              <div class="co-tabs">
+                <div class="co-tab passive">В пункт выдачи</div>
+                <div class="co-tab active">Курьером</div>
+              </div>
+
+              <div class="co-section">Выберите время доставки</div>
+
+              <div class="co-row">
+                <div class="co-dot"></div>
+                <div class="co-row-body">
+                  <div class="co-row-title">Завтра, 14:00 – 18:00</div>
+                  <div class="co-row-sub">Стандартная доставка · 15 мин на примерку</div>
+                </div>
+                <div class="co-price">Бесплатно</div>
+              </div>
+
+              <div class="co-row selected green">
+                <div class="co-dot green"></div>
+                <div class="co-row-body">
+                  <div class="co-row-title">Завтра, 14:00 – 18:00</div>
+                  <div class="co-row-sub">Расширенная примерка · 30 мин — курьер ждёт</div>
+                  <div class="co-row-badge green">30 мин · для 5+ вещей</div>
+                </div>
+                <div class="co-price extra">+99 ₽</div>
+              </div>
+
+              <div class="co-row">
+                <div class="co-dot"></div>
+                <div class="co-row-body">
+                  <div class="co-row-title">Завтра, 18:00 – 22:00</div>
+                  <div class="co-row-sub">Стандартная доставка · 15 мин на примерку</div>
+                </div>
+                <div class="co-price">Бесплатно</div>
+              </div>
+
+              <hr class="co-divider">
+              <div class="co-total-row"><span>5 товаров</span><span>14 990 ₽</span></div>
+              <div class="co-total-row"><span>Доставка</span><span style="color:#22c55e;">Бесплатно</span></div>
+              <div class="co-total-row"><span>Расширенная примерка</span><span>+99 ₽</span></div>
+              <div class="co-total-row bold"><span>Итого</span><span>15 089 ₽</span></div>
+              <div class="co-btn">Оплатить 15 089 ₽</div>
+              <div class="co-note" style="color:#16a34a;font-weight:600;">30 минут · курьер ждёт · можно примерить всё</div>
+
+            </div>
+          </div>
+          <div class="co-caption">Клиент с 5+ вещами видит новую опцию. Осознанный opt-in — доплата видна до оплаты.</div>
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+  <footer>
+    <p><strong>Автор:</strong> Скринник Михаил Александрович</p>
+    <p><strong>Дата:</strong> <span id="doc-date"></span></p>
+    <p class="text-muted" style="margin-top:12px;">Артефакт по тестовому заданию Lamoda · один файл HTML/CSS/JS · без фреймворков</p>
+  </footer>
+
+  <script>
+    document.getElementById('doc-date').textContent = new Date().toLocaleDateString('ru-RU', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+  </script>
+</body>
+</html>
